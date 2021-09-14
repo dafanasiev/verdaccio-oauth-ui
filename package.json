@@ -1,6 +1,6 @@
 {
   "$schema": "http://json.schemastore.org/package",
-  "name": "verdaccio-github-oauth-ui",
+  "name": "verdaccio-oauth-ui",
   "version": "3.0.0",
   "keywords": [
     "github",
@@ -12,14 +12,11 @@
     "registry",
     "verdaccio"
   ],
-  "homepage": "https://github.com/n4bb12/verdaccio-github-oauth-ui/blob/master/README.md",
-  "bugs": "https://github.com/n4bb12/verdaccio-github-oauth-ui/issues",
-  "repository": "github:n4bb12/verdaccio-github-oauth-ui",
   "license": "MIT",
   "author": "Abraham Schilling",
   "main": "dist/server.js",
   "bin": {
-    "verdaccio-github-oauth-ui": "dist/cli.js"
+    "verdaccio-oauth-ui": "dist/cli.js"
   },
   "files": [
     "dist"
@@ -30,7 +27,7 @@
     "format": "prettier --write \"**/*.{ts,js,css,scss,html,json}\"",
     "format:check": "prettier --check \"**/*.{ts,js,css,scss,html,json}\"",
     "prepack": "bash run clean && bash run build",
-    "start": "verdaccio -c config.yaml",
+    "start": "NODE_OPTIONS='--inspect-brk' ./node_modules/.bin/verdaccio -c config.yaml",
     "test": "jest",
     "test:cli": "bash run test-cli",
     "test:coverage": "jest --collectCoverage && codecov",

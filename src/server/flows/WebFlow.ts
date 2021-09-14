@@ -56,8 +56,8 @@ export class WebFlow implements IPluginMiddleware<any> {
     const withBackButton = true
 
     try {
-      const code = this.provider.getCode(req)
-      const token = await this.provider.getToken(code)
+      //const code = this.provider.getCode(req)
+      const token = await this.provider.getToken(req)
       const [username, groups] = await Promise.all([
         this.provider.getUsername(token),
         this.provider.getGroups(token),

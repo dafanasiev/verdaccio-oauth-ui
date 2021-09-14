@@ -30,8 +30,8 @@ export class CliFlow implements IPluginMiddleware<any> {
     const params: Record<string, string> = {}
 
     try {
-      const code = this.provider.getCode(req)
-      const token = await this.provider.getToken(code)
+      //const code = this.provider.getCode(req)
+      const token = await this.provider.getToken(req)
       const [username, groups] = await Promise.all([
         this.provider.getUsername(token),
         this.provider.getGroups(token),

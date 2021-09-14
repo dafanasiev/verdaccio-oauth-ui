@@ -2,11 +2,9 @@ import { stringify } from "querystring"
 
 import { logger } from "../../logger"
 import { User, Verdaccio } from "../verdaccio"
-import { Config, getConfig } from "./Config"
+import { Config } from "./Config"
 
 export class AuthCore {
-  private readonly requiredGroup = "github/" + getConfig(this.config, "org")
-
   constructor(
     private readonly verdaccio: Verdaccio,
     private readonly config: Config,
@@ -43,9 +41,9 @@ export class AuthCore {
   }
 
   authenticate(username: string, groups: string[]): boolean {
-    if (!groups.includes(this.requiredGroup)) {
+    if (!groups) {
       logger.error(
-        `Access denied: User "${username}" is not a member of the required GitHub org "${this.requiredGroup}"`,
+        `Access denied: User "${username}" is not a member of any group`,
       )
       return false
     }

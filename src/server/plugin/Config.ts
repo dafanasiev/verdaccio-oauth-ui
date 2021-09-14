@@ -10,10 +10,13 @@ import { logger } from "../../logger"
 //
 
 export interface PluginConfig {
-  org: string
-  "client-id": string
-  "client-secret": string
-  "enterprise-origin"?: string
+  "client_id": string
+  "client_secret": string
+  "authorization_endpoint": string
+  "token_endpoint": string
+  "scope": string
+  "name_claim": string
+  "roles_claim": string
 }
 
 export type PluginConfigKey = keyof PluginConfig
@@ -78,8 +81,11 @@ export function validateConfig(config: Config) {
 
   ensureNodeIsNotEmpty(config, "auth")
   ensureNodeIsNotEmpty(config, "middlewares")
-
-  ensurePropExists(config, "org")
-  ensurePropExists(config, "client-id")
-  ensurePropExists(config, "client-secret")
+  ensurePropExists(config, "client_id")
+  ensurePropExists(config, "client_secret")
+  ensurePropExists(config, "authorization_endpoint")
+  ensurePropExists(config, "token_endpoint")
+  ensurePropExists(config, "scope")
+  ensurePropExists(config, "name_claim")
+  ensurePropExists(config, "roles_claim")
 }
