@@ -1,7 +1,6 @@
 import { Config as VerdaccioConfig, JWTSignOptions } from "@verdaccio/types"
 import { merge } from "lodash"
 
-import { getMajorVersion } from "../plugin/Config"
 import { Auth, User } from "../verdaccio"
 
 // Most of this is duplicated Verdaccio code because it is unfortunately not availabel via API.
@@ -29,7 +28,6 @@ function getSecurity(config: VerdaccioConfig) {
  * Abstract Verdaccio version differences and usage of all Verdaccio objects.
  */
 export class Verdaccio {
-  readonly majorVersion = getMajorVersion(this.config)
   readonly security = getSecurity(this.config)
 
   private auth!: Auth

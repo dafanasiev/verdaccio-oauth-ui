@@ -23,7 +23,6 @@ export const testProviderId = "test-auth-provider"
 export const testLoginUrl = "test-login-url"
 export const testOAuthCode = "test-code"
 export const testOAuthToken = "test-token"
-export const testMajorVersion = 4
 export const testBaseUrl = "http://localhost:4873"
 export const testUIToken = "test-ui-token"
 export const testNPMToken = "test-npm-token"
@@ -48,7 +47,6 @@ export function createTestConfig(config?: Partial<PluginConfig>) {
         enabled: true,
       },
     },
-    user_agent: "verdaccio/5.0.4",
     ...config,
   } as any) as Config
 }

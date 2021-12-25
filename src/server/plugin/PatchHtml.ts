@@ -10,9 +10,9 @@ import { Verdaccio } from "../verdaccio"
  * that modifies the login button.
  */
 export class PatchHtml implements IPluginMiddleware<any> {
-  private readonly scriptTag = `<script src="${staticPath}/verdaccio-${this.verdaccio.majorVersion}.js"></script>`
+  private readonly scriptTag = `<script src="${staticPath}/verdaccio-5.js"></script>`
   private readonly styleTag = `<style>${readFileSync(
-    `${publicRoot}/verdaccio-${this.verdaccio.majorVersion}.css`,
+    `${publicRoot}/verdaccio-5.css`,
   )}</style>`
   private readonly headWithStyle = [this.styleTag, "</head>"].join("")
   private readonly bodyWithScript = [this.scriptTag, "</body>"].join("")

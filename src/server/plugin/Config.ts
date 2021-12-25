@@ -39,13 +39,6 @@ export function getConfig(config: Config, key: PluginConfigKey): string {
   return process.env[value] || value
 }
 
-/**
- * user_agent: e.g. "verdaccio/5.0.4" --> 5
- */
-export function getMajorVersion(config: VerdaccioConfig) {
-  return +config.user_agent.replace(/^verdaccio\/(\d+).\d+.\d+$/, "$1")
-}
-
 //
 // Validation
 //
@@ -73,12 +66,6 @@ function ensureNodeIsNotEmpty(config: Config, node: keyof Config) {
 }
 
 export function validateConfig(config: Config) {
-  const majorVersion = getMajorVersion(config)
-
-  if (majorVersion < 5) {
-    throw new Error("This plugin requires verdaccio 5 or above")
-  }
-
   ensureNodeIsNotEmpty(config, "auth")
   ensureNodeIsNotEmpty(config, "middlewares")
   ensurePropExists(config, "client_id")
