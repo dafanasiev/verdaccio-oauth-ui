@@ -1,13 +1,11 @@
 import chalk from "chalk"
+import { plugin, pluginKey } from "./constants"
 
-import { pluginName } from "./constants"
-
-const prefix = chalk.blue(`[${pluginName}]`)
+const prefix = chalk.blue(`[${pluginKey}]`)
 
 export const logger = {
   log: console.log.bind(console, prefix),
-  error: console.error.bind(console, prefix),
+  error: (...args: any[]) => console.error(prefix, chalk.red(args.join(" "))),
 }
 
-const plugin = require(__dirname + "/../package.json")
 logger.log(`Version: ${plugin.name}@${plugin.version}`)

@@ -1,0 +1,54 @@
+#
+# Look here for more config file examples:
+# https://github.com/verdaccio/verdaccio/tree/master/conf
+#
+
+storage: ./tmp
+plugins: ./plugins
+
+middlewares:
+  audit:
+    enabled: true
+  oauth-ui:
+    enabled: true
+
+logs: { type: stdout, format: pretty, level: http }
+
+auth:
+  oauth-ui:
+    authorization_endpoint: "https://sso.example.com/auth"
+    token_endpoint: "https://sso.example.com/protocol/token"
+    client_id: "some-client"
+    client_secret: "some-secret"
+    scope: "openid profile"
+    name_claim: "preferred_username"
+    roles_claim: "roles"
+
+security:
+  api:
+    jwt:
+      sign:
+        expiresIn: 30d
+  web:
+    sign:
+      expiresIn: 7d
+
+server:
+  keepAliveTimeout: 60
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+
+packages:
+  "@*/*":
+    access: "@viewer"
+    publish: "@publisher"
+    unpublish: "@publisher"
+    proxy: npmjs
+
+  "**":
+    access: "@viewer"
+    publish: "@viewer"
+    unpublish: "@viewer"
+    proxy: npmjs

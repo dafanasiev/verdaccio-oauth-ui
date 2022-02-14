@@ -1,6 +1,6 @@
-.cache/
 .env
-.vscode
+.parcel-cache/
+.vscode/
 *.log
 *.stackdump
 coverage/

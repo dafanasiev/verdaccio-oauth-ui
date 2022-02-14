@@ -1,8 +1,9 @@
 {
   "$schema": "http://json.schemastore.org/package",
   "name": "verdaccio-oauth-ui",
-  "version": "3.0.0",
+  "version": "3.2.4",
   "keywords": [
+    "authentication",
     "github",
     "login",
     "npm",
@@ -10,74 +11,64 @@
     "package",
     "private",
     "registry",
-    "verdaccio"
+    "verdaccio",
+    "verdaccio-auth",
+    "verdaccio-auth-plugin",
+    "verdaccio-plugin"
   ],
   "license": "MIT",
   "author": "Abraham Schilling",
-  "main": "dist/server.js",
+  "main": "dist/server/index.js",
   "bin": {
-    "verdaccio-oauth-ui": "dist/cli.js"
+    "verdaccio-oauth-ui": "dist/cli/index.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "bash run build",
+    "clean": "bash run clean",
     "dev": "yarn update && yarn start",
+    "fix": "yarn format && yarn typecheck",
     "format": "prettier --write \"**/*.{ts,js,css,scss,html,json}\"",
     "format:check": "prettier --check \"**/*.{ts,js,css,scss,html,json}\"",
     "prepack": "bash run clean && bash run build",
-    "start": "NODE_OPTIONS='--inspect-brk' ./node_modules/.bin/verdaccio -c config.yaml",
-    "test": "jest",
-    "test:cli": "bash run test-cli",
-    "test:coverage": "jest --collectCoverage && codecov",
-    "test:docker": "bash run test-docker",
-    "test:publish": "bash run test-publish",
-    "test:watch": "jest --watch",
-    "test:whoami": "bash run test-whoami",
-    "typecheck": "bash run typecheck",
+    "start": "NODE_OPTIONS='--inspect-brk' verdaccio -c verdaccio.yaml",
     "update": "yarn prepack && bash run copy",
     "watch": "nodemon --watch src --ext ts,css --exec \"yarn update\""
   },
   "dependencies": {
-    "chalk": "^4.1.1",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.0",
-    "global-agent": "^2.2.0",
-    "got": "^11.8.1",
+    "chalk": "^5.0.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "global-agent": "^3.0.0",
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "minimist": "^1.2.0",
+    "node-fetch": "2",
     "open": "^8.0.7",
-    "query-string": "^7.0.0"
+    "ow": "^0.28.1",
+    "query-string": "^7.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.14.0",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
-    "@babel/preset-env": "^7.14.0",
-    "@babel/preset-typescript": "^7.12.7",
-    "@tsconfig/node10": "^1.0.7",
+    "@parcel/config-default": "^2.2.1",
+    "@parcel/transformer-typescript-tsc": "^2.2.1",
     "@types/express": "^4.17.9",
     "@types/global-agent": "^2.1.0",
-    "@types/got": "^9.4.1",
-    "@types/jest": "^26.0.23",
-    "@types/lodash": "^4.14.166",
-    "@types/memory-cache": "^0.2.1",
+    "@types/lodash": "^4.14.178",
+    "@types/memory-cache": "^0.2.2",
     "@types/minimist": "^1.2.1",
-    "@types/node": "^15.0.1",
-    "@types/query-string": "^6.3.0",
+    "@types/node": "^17.0.17",
     "@verdaccio/types": "^10.2.2",
-    "babel-jest": "^26.6.3",
-    "codecov": "^3.8.1",
-    "core-js": "^3.11.1",
-    "jest": "^26.6.3",
+    "c8": "^7.11.0",
+    "core-js": "^3.21.0",
     "nodemon": "^2.0.6",
-    "parcel-bundler": "^1.12.4",
-    "prettier": "^2.2.1",
-    "release-it": "^14.6.1",
-    "typescript": "^4.2.4",
-    "verdaccio": "^5.4.0",
+    "parcel": "^2.2.1",
+    "prettier": "^2.5.1",
+    "timekeeper": "^2.2.0",
+    "type-fest": "^2.11.1",
+    "typescript": "^4.5.5",
+    "verdaccio": "^5.5.2",
     "verdaccio-htpasswd": "^10.1.0"
   },
   "peerDependencies": {
@@ -88,5 +79,25 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
+  },
+  "targets": {
+    "browser": {
+      "source": "src/client/verdaccio-5.ts",
+      "context": "browser",
+      "includeNodeModules": true
+    },
+    "server": {
+      "source": "src/server/index.ts",
+      "context": "node",
+      "outputFormat": "commonjs",
+      "optimize": false,
+      "isLibrary": true
+    },
+    "cli": {
+      "source": "src/cli/index.ts",
+      "context": "node",
+      "outputFormat": "commonjs",
+      "optimize": false
+    }
   }
 }

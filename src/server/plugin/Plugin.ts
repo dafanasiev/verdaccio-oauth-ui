@@ -1,27 +1,33 @@
-import { AuthCallback, IPluginAuth, IPluginMiddleware } from "@verdaccio/types"
+import {
+  AllowAccess,
+  AuthAccessCallback,
+  AuthCallback,
+  IPluginAuth,
+  IPluginMiddleware,
+  RemoteUser,
+} from "@verdaccio/types"
 import { Application } from "express"
-
 import { CliFlow, WebFlow } from "../flows"
-import { GitHubAuthProvider } from "../github"
-import { Auth, Verdaccio } from "../verdaccio"
+import { OAuth2AuthProvider } from "../oauth"
 import { AuthCore } from "./AuthCore"
 import { Cache } from "./Cache"
-import { Config, validateConfig } from "./Config"
+import { Config, PackageAccess, ParsedPluginConfig } from "./Config"
 import { PatchHtml } from "./PatchHtml"
 import { registerGlobalProxyAgent } from "./ProxyAgent"
 import { ServeStatic } from "./ServeStatic"
+import { Auth, Verdaccio } from "./Verdaccio"
 
 /**
  * Implements the verdaccio plugin interfaces.
  */
 export class Plugin implements IPluginMiddleware<any>, IPluginAuth<any> {
-  private readonly provider = new GitHubAuthProvider(this.config)
+  private readonly parsedConfig = new ParsedPluginConfig(this.config)
+  private readonly provider = new OAuth2AuthProvider(this.parsedConfig)
   private readonly cache = new Cache(this.provider)
   private readonly verdaccio = new Verdaccio(this.config)
-  private readonly core = new AuthCore(this.verdaccio, this.config)
+  private readonly core = new AuthCore(this.verdaccio, this.parsedConfig)
 
   constructor(private readonly config: Config) {
-    validateConfig(config)
     registerGlobalProxyAgent()
   }
 
@@ -34,7 +40,7 @@ export class Plugin implements IPluginMiddleware<any>, IPluginAuth<any> {
     const children = [
       new ServeStatic(),
       new PatchHtml(this.verdaccio),
-      new WebFlow(this.config, this.core, this.provider),
+      new WebFlow(this.parsedConfig, this.core, this.provider),
       new CliFlow(this.verdaccio, this.core, this.provider),
     ]
 
@@ -46,7 +52,11 @@ export class Plugin implements IPluginMiddleware<any>, IPluginAuth<any> {
   /**
    * IPluginAuth
    */
-  async authenticate(username: string, token: string, callback: AuthCallback) {
+  async authenticate(
+    username: string,
+    token: string,
+    callback: AuthCallback,
+  ): Promise<void> {
     try {
       if (!username || !token) {
         callback(null, false)
@@ -65,6 +75,56 @@ export class Plugin implements IPluginMiddleware<any>, IPluginAuth<any> {
       callback(null, false)
     } catch (error) {
       callback(error, false)
+    }
+  }
+
+  /**
+   * IPluginAuth
+   */
+  allow_access(
+    user: RemoteUser,
+    config: AllowAccess & PackageAccess,
+    callback: AuthAccessCallback,
+  ): void {
+    if (config.access) {
+      const grant = config.access.some((group) => user.groups.includes(group))
+      callback(null, grant)
+    } else {
+      callback(null, true)
+    }
+  }
+
+  /**
+   * IPluginAuth
+   */
+  allow_publish(
+    user: RemoteUser,
+    config: AllowAccess & PackageAccess,
+    callback: AuthAccessCallback,
+  ): void {
+    if (config.publish) {
+      const grant = config.publish.some((group) => user.groups.includes(group))
+      callback(null, grant)
+    } else {
+      this.allow_access(user, config, callback)
+    }
+  }
+
+  /**
+   * IPluginAuth
+   */
+  allow_unpublish(
+    user: RemoteUser,
+    config: AllowAccess & PackageAccess,
+    callback: AuthAccessCallback,
+  ): void {
+    if (config.unpublish) {
+      const grant = config.unpublish.some((group) =>
+        user.groups.includes(group),
+      )
+      callback(null, grant)
+    } else {
+      this.allow_publish(user, config, callback)
     }
   }
 }

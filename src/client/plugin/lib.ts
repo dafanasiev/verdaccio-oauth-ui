@@ -1,10 +1,10 @@
-import qs from "query-string"
+import { parse } from "query-string"
 
 /**
  * Returns `?a=b&c` as `{ a: b, c: true }`.
  */
 export function parseQueryParams() {
-  return qs.parse(window.location.search || "?")
+  return parse(location.search || "?")
 }
 
 export function retry(action: () => void) {
@@ -14,7 +14,7 @@ export function retry(action: () => void) {
 }
 
 function pathContainsElement(selector: string, e: MouseEvent): boolean {
-  const path = e.path || (e.composedPath && e.composedPath())
+  const path = e.path || e.composedPath?.()
   const element = document.querySelector(selector)!
 
   return path.includes(element)
